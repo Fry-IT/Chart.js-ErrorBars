@@ -11,37 +11,41 @@ describe('Test the radial linear scale', function() {
 		expect(defaultConfig).toEqual({
 			angleLines: {
 				display: true,
-				color: "rgba(0, 0, 0, 0.1)",
+				color: 'rgba(0, 0, 0, 0.1)',
 				lineWidth: 1
 			},
 			animate: true,
 			display: true,
 			gridLines: {
-				color: "rgba(0, 0, 0, 0.1)",
+				color: 'rgba(0, 0, 0, 0.1)',
+				drawBorder: true,
 				drawOnChartArea: true,
 				drawTicks: true,
 				tickMarkLength: 10,
 				lineWidth: 1,
 				offsetGridLines: false,
 				display: true,
-				zeroLineColor: "rgba(0,0,0,0.25)",
+				zeroLineColor: 'rgba(0,0,0,0.25)',
 				zeroLineWidth: 1,
+				borderDash: [],
+				borderDashOffset: 0.0
 			},
 			lineArc: false,
 			pointLabels: {
 				fontSize: 10,
 				callback: defaultConfig.pointLabels.callback, // make this nicer, then check explicitly below
 			},
-			position: "chartArea",
+			position: 'chartArea',
 			scaleLabel: {
 				labelString: '',
 				display: false,
 			},
 			ticks: {
-				backdropColor: "rgba(255,255,255,0.75)",
+				backdropColor: 'rgba(255,255,255,0.75)',
 				backdropPaddingY: 2,
 				backdropPaddingX: 2,
 				beginAtZero: false,
+				minRotation: 0,
 				maxRotation: 50,
 				mirror: false,
 				padding: 10,
@@ -50,7 +54,8 @@ describe('Test the radial linear scale', function() {
 				display: true,
 				callback: defaultConfig.ticks.callback, // make this nicer, then check explicitly below
 				autoSkip: true,
-				autoSkipPadding: 0
+				autoSkipPadding: 0,
+				labelOffset: 0
 			},
 		});
 
@@ -60,124 +65,84 @@ describe('Test the radial linear scale', function() {
 	});
 
 	it('Should correctly determine the max & min data values', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, -5, 78, -100]
-			}, {
-				yAxisID: scaleID,
-				data: [150]
-			}],
-			labels: ['lablel1', 'label2', 'label3', 'label4', 'label5', 'label6']
-		};
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: Chart.scaleService.getScaleDefaults('radialLinear'), // use default config for scale
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, -5, 78, -100]
+				}, {
+					data: [150]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6']
 			},
-			id: scaleID,
+			options: {
+				scales: {}
+			}
 		});
 
-		scale.update(200, 300);
-		expect(scale.min).toBe(-100);
-		expect(scale.max).toBe(200);
+		expect(chart.scale.min).toBe(-100);
+		expect(chart.scale.max).toBe(150);
 	});
 
 	it('Should correctly determine the max & min of string data values', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: ['10', '5', '0', '-5', '78', '-100']
-			}, {
-				yAxisID: scaleID,
-				data: ['150']
-			}],
-			labels: ['lablel1', 'label2', 'label3', 'label4', 'label5', 'label6']
-		};
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: Chart.scaleService.getScaleDefaults('radialLinear'), // use default config for scale
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: ['10', '5', '0', '-5', '78', '-100']
+				}, {
+					data: ['150']
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6']
 			},
-			id: scaleID,
+			options: {
+				scales: {}
+			}
 		});
 
-		scale.update(200, 300);
-		expect(scale.min).toBe(-100);
-		expect(scale.max).toBe(200);
+		expect(chart.scale.min).toBe(-100);
+		expect(chart.scale.max).toBe(150);
 	});
 
 	it('Should correctly determine the max & min data values when there are hidden datasets', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, -5, 78, -100]
-			}, {
-				yAxisID: scaleID,
-				data: [150]
-			}, {
-				yAxisID: scaleID,
-				data: [1000],
-				hidden: true
-			}],
-			labels: ['lablel1', 'label2', 'label3', 'label4', 'label5', 'label6']
-		};
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: Chart.scaleService.getScaleDefaults('radialLinear'), // use default config for scale
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: ['10', '5', '0', '-5', '78', '-100']
+				}, {
+					data: ['150']
+				}, {
+					data: [1000],
+					hidden: true
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6']
 			},
-			id: scaleID,
+			options: {
+				scales: {}
+			}
 		});
 
-		scale.update(200, 300);
-		expect(scale.min).toBe(-100);
-		expect(scale.max).toBe(200);
+		expect(chart.scale.min).toBe(-100);
+		expect(chart.scale.max).toBe(150);
 	});
 
 	it('Should correctly determine the max & min data values when there is NaN data', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [50, 60, NaN, 70, null, undefined]
-			}],
-			labels: ['lablel1', 'label2', 'label3', 'label4', 'label5', 'label6']
-		};
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: Chart.scaleService.getScaleDefaults('radialLinear'), // use default config for scale
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [50, 60, NaN, 70, null, undefined, Infinity, -Infinity]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6', 'label7', 'label8']
 			},
-			id: scaleID,
+			options: {
+				scales: {}
+			}
 		});
 
-		scale.update(200, 300);
-		expect(scale.min).toBe(50);
-		expect(scale.max).toBe(70);
+		expect(chart.scale.min).toBe(50);
+		expect(chart.scale.max).toBe(70);
 	});
 
 	it('Should ensure that the scale has a max and min that are not equal', function() {
@@ -205,804 +170,275 @@ describe('Test the radial linear scale', function() {
 	});
 
 	it('Should use the suggestedMin and suggestedMax options', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [1, 1, 1, 2, 1, 0]
-			}],
-			labels: ['lablel1', 'label2', 'label3', 'label4', 'label5', 'label6']
-		};
-
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		config.ticks.suggestedMin = -10;
-		config.ticks.suggestedMax = 10;
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [1, 1, 1, 2, 1, 0]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6']
 			},
-			id: scaleID
+			options: {
+				scale: {
+					ticks: {
+						suggestedMin: -10,
+						suggestedMax: 10
+					}
+				}
+			}
 		});
 
-		// Set arbitrary width and height for now
-		scale.update(200, 300);
-		expect(scale.min).toBe(-10);
-		expect(scale.max).toBe(10);
+		expect(chart.scale.min).toBe(-10);
+		expect(chart.scale.max).toBe(10);
 	});
 
 	it('Should use the min and max options', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [1, 1, 1, 2, 1, 0]
-			}],
-			labels: ['lablel1', 'label2', 'label3', 'label4', 'label5', 'label6']
-		};
-
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		config.ticks.min = -1010;
-		config.ticks.max = 1010;
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [1, 1, 1, 2, 1, 0]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6']
 			},
-			id: scaleID
+			options: {
+				scale: {
+					ticks: {
+						min: -1010,
+						max: 1010
+					}
+				}
+			}
 		});
 
-		// Set arbitrary width and height for now
-		scale.update(200, 300);
-		expect(scale.min).toBe(-1010);
-		expect(scale.max).toBe(1010);
-		expect(scale.ticks[0]).toBe('-1010');
-		expect(scale.ticks[scale.ticks.length - 1]).toBe('1010');
-		expect(scale.ticks).toEqual(['-1010', '-1000', '0', '1000', '1010']);
+		expect(chart.scale.min).toBe(-1010);
+		expect(chart.scale.max).toBe(1010);
+		expect(chart.scale.ticks).toEqual(['-1010', '-1000', '-500', '0', '500', '1000', '1010']);
 	});
 
 	it('should forcibly include 0 in the range if the beginAtZero option is used', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [20, 30, 40, 50]
-			}],
-			labels: [],
-		};
-
-		var mockContext = window.createMockContext();
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [20, 30, 40, 50]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					ticks: {
+						beginAtZero: false
+					}
+				}
+			}
 		});
 
-		config.ticks.beginAtZero = false;
-		scale.update(400, 400);
-		expect(scale.ticks).toEqual(['20', '25', '30', '35', '40', '45', '50']);
+		expect(chart.scale.ticks).toEqual(['20', '25', '30', '35', '40', '45', '50']);
 
-		config.ticks.beginAtZero = true;
-		scale.update(400, 400);
-		expect(scale.ticks).toEqual(['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50']);
+		chart.scale.options.ticks.beginAtZero = true;
+		chart.update();
 
-		mockData.datasets[0].data = [-20, -30, -40, -50];
-		scale.update(400, 400);
-		expect(scale.ticks).toEqual(['-50', '-45', '-40', '-35', '-30', '-25', '-20', '-15', '-10', '-5', '0']);
+		expect(chart.scale.ticks).toEqual(['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50']);
 
-		config.ticks.beginAtZero = false;
-		scale.update(400, 400);
-		expect(scale.ticks).toEqual(['-50', '-45', '-40', '-35', '-30', '-25', '-20']);
+		chart.data.datasets[0].data = [-20, -30, -40, -50];
+		chart.update();
+
+		expect(chart.scale.ticks).toEqual(['-50', '-45', '-40', '-35', '-30', '-25', '-20', '-15', '-10', '-5', '0']);
+
+		chart.scale.options.ticks.beginAtZero = false;
+		chart.update();
+
+		expect(chart.scale.ticks).toEqual(['-50', '-45', '-40', '-35', '-30', '-25', '-20']);
 	});
 
 	it('Should generate tick marks in the correct order in reversed mode', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, 25, 78]
-			}],
-			labels: []
-		};
-
-		var mockContext = window.createMockContext();
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		config.ticks.reverse = true;
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, 25, 78]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					ticks: {
+						reverse: true
+					}
+				}
+			}
 		});
 
-		scale.update(200, 300);
-
-		// Reverse mode makes this count up
-		expect(scale.ticks).toEqual(['80', '60', '40', '20', '0']);
-		expect(scale.start).toBe(80);
-		expect(scale.end).toBe(0);
+		expect(chart.scale.ticks).toEqual(['80', '70', '60', '50', '40', '30', '20', '10', '0']);
+		expect(chart.scale.start).toBe(80);
+		expect(chart.scale.end).toBe(0);
 	});
 
 	it('Should build labels using the user supplied callback', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, 25, 78]
-			}],
-			labels: ['label1', 'label2', 'label3', 'label4', 'label5']
-		};
-
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		config.ticks.userCallback = function(value, index) {
-			return index.toString();
-		};
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, 25, 78]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					ticks: {
+						callback: function(value, index) {
+							return index.toString();
+						}
+					}
+				}
+			}
 		});
 
-		scale.update(200, 300);
-
-		// Just the index
-		expect(scale.ticks).toEqual(['0', '1', '2', '3', '4']);
-		expect(scale.pointLabels).toEqual(['label1', 'label2', 'label3', 'label4', 'label5']);
+		expect(chart.scale.ticks).toEqual(['0', '1', '2', '3', '4', '5', '6', '7', '8']);
+		expect(chart.scale.pointLabels).toEqual(['label1', 'label2', 'label3', 'label4', 'label5']);
 	});
 
 	it('Should build point labels using the user supplied callback', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, 25, 78]
-			}],
-			labels: ['label1', 'label2', 'label3', 'label4', 'label5']
-		};
-
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		config.pointLabels.callback = function(value, index) {
-			return index.toString();
-		};
-
-		var mockContext = window.createMockContext();
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, 25, 78]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					pointLabels: {
+						callback: function(value, index) {
+							return index.toString();
+						}
+					}
+				}
+			}
 		});
 
-		scale.update(200, 300);
-
-		// Just the index
-		expect(scale.pointLabels).toEqual(['0', '1', '2', '3', '4']);
+		expect(chart.scale.pointLabels).toEqual(['0', '1', '2', '3', '4']);
 	});
 
 	it('should correctly set the center point', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, 25, 78]
-			}],
-			labels: ['point1', 'point2', 'point3', 'point4', 'point5'] // used in radar charts which use the same scales
-		};
-
-		var mockContext = window.createMockContext();
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, 25, 78]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					pointLabels: {
+						callback: function(value, index) {
+							return index.toString();
+						}
+					}
+				}
+			}
 		});
 
-		scale.left = 10;
-		scale.right = 210;
-		scale.top = 5;
-		scale.bottom = 305;
-		scale.update(200, 300);
-
-		expect(scale.drawingArea).toBe(37);
-		expect(scale.xCenter).toBe(110);
-		expect(scale.yCenter).toBe(155);
+		expect(chart.scale.drawingArea).toBe(225);
+		expect(chart.scale.xCenter).toBe(256);
+		expect(chart.scale.yCenter).toBe(272);
 	});
 
 	it('should correctly get the label for a given data index', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, 25, 78]
-			}],
-			labels: ['point1', 'point2', 'point3', 'point4', 'point5'] // used in radar charts which use the same scales
-		};
-
-		var mockContext = window.createMockContext();
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, 25, 78]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					pointLabels: {
+						callback: function(value, index) {
+							return index.toString();
+						}
+					}
+				}
+			}
 		});
-
-		scale.left = 10;
-		scale.right = 210;
-		scale.top = 5;
-		scale.bottom = 305;
-		scale.update(200, 300);
-
-		expect(scale.getLabelForIndex(1, 0)).toBe(5);
+		expect(chart.scale.getLabelForIndex(1, 0)).toBe(5);
 	});
 
 	it('should get the correct distance from the center point', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, 25, 78]
-			}],
-			labels: ['point1', 'point2', 'point3', 'point4', 'point5'] // used in radar charts which use the same scales
-		};
-
-		var mockContext = window.createMockContext();
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, 25, 78]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					pointLabels: {
+						callback: function(value, index) {
+							return index.toString();
+						}
+					}
+				}
+			}
 		});
 
-		scale.left = 0;
-		scale.right = 200;
-		scale.top = 0;
-		scale.bottom = 300;
-		scale.update(200, 300);
-
-		expect(scale.getDistanceFromCenterForValue(scale.min)).toBe(0);
-		expect(scale.getDistanceFromCenterForValue(scale.max)).toBe(37);
-		expect(scale.getPointPositionForValue(1, 5)).toEqual({
-			x: 102,
-			y: 149,
+		expect(chart.scale.getDistanceFromCenterForValue(chart.scale.min)).toBe(0);
+		expect(chart.scale.getDistanceFromCenterForValue(chart.scale.max)).toBe(225);
+		expect(chart.scale.getPointPositionForValue(1, 5)).toEqual({
+			x: 269,
+			y: 268,
 		});
 
-		config.reverse = true;
+		chart.scale.options.reverse = true;
+		chart.update();
 
-		scale.update(200, 300);
-
-		expect(scale.getDistanceFromCenterForValue(scale.min)).toBe(37);
-		expect(scale.getDistanceFromCenterForValue(scale.max)).toBe(0);
+		expect(chart.scale.getDistanceFromCenterForValue(chart.scale.min)).toBe(225);
+		expect(chart.scale.getDistanceFromCenterForValue(chart.scale.max)).toBe(0);
 	});
 
-	it('should draw correctly when there are no point labels', function() {
-		var scaleID = 'myScale';
-
-		var mockData = {
-			datasets: [{
-				yAxisID: scaleID,
-				data: [10, 5, 0, 25, 78]
-			}, ],
-			labels: ['point1', 'point2', 'point3', 'point4', 'point5'] // used in radar charts which use the same scales
-		};
-
-		var mockContext = window.createMockContext();
-		var config = Chart.helpers.clone(Chart.scaleService.getScaleDefaults('radialLinear'));
-		config.lineArc = true;
-		var Constructor = Chart.scaleService.getScaleConstructor('radialLinear');
-		var scale = new Constructor({
-			ctx: mockContext,
-			options: config,
-			chart: {
-				data: mockData
+	it('should correctly get angles for all points', function() {
+		var chart = window.acquireChart({
+			type: 'radar',
+			data: {
+				datasets: [{
+					data: [10, 5, 0, 25, 78]
+				}],
+				labels: ['label1', 'label2', 'label3', 'label4', 'label5']
 			},
-			id: scaleID,
+			options: {
+				scale: {
+					pointLabels: {
+						callback: function(value, index) {
+							return index.toString();
+						}
+					}
+				},
+				startAngle: 15
+			}
 		});
 
-		scale.left = 0;
-		scale.right = 200;
-		scale.top = 0;
-		scale.bottom = 300;
-		scale.update(200, 300);
+		var radToNearestDegree = function(rad) {
+			return Math.round((360 * rad) / (2 * Math.PI));
+		};
 
-		scale.draw();
+		var slice = 72; // (360 / 5)
 
-		var expected = [{
-			"name": "measureText",
-			"args": ["0"]
-		}, {
-			"name": "measureText",
-			"args": ["80"]
-		}, {
-			"name": "measureText",
-			"args": ["point1"]
-		}, {
-			"name": "measureText",
-			"args": ["point2"]
-		}, {
-			"name": "measureText",
-			"args": ["point3"]
-		}, {
-			"name": "measureText",
-			"args": ["point4"]
-		}, {
-			"name": "measureText",
-			"args": ["point5"]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "arc",
-			"args": [100, 150, 9.25, 0, 6.283185307179586]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["20"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 132.75, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["20", 100, 140.75]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "arc",
-			"args": [100, 150, 18.5, 0, 6.283185307179586]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["40"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 123.5, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["40", 100, 131.5]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "arc",
-			"args": [100, 150, 27.75, 0, 6.283185307179586]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["60"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 114.25, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["60", 100, 122.25]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "arc",
-			"args": [100, 150, 37, 0, 6.283185307179586]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["80"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 105, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["80", 100, 113]
-		}];
-		expect(mockContext.getCalls()).toEqual(expected);
+		for (var i = 0; i < 5; i++) {
+			expect(radToNearestDegree(chart.scale.getIndexAngle(i))).toBe(15 + (slice * i) - 90);
+		}
 
-		mockContext.resetCalls();
-		config.lineArc = false;
-		scale.draw();
+		chart.options.startAngle = 0;
+		chart.update();
 
-		expect(mockContext.getCalls()).toEqual([{
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 141]
-		}, {
-			"name": "lineTo",
-			"args": [109, 147]
-		}, {
-			"name": "lineTo",
-			"args": [105, 157]
-		}, {
-			"name": "lineTo",
-			"args": [95, 157]
-		}, {
-			"name": "lineTo",
-			"args": [91, 147]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["20"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 132.75, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["20", 100, 140.75]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 132]
-		}, {
-			"name": "lineTo",
-			"args": [118, 144]
-		}, {
-			"name": "lineTo",
-			"args": [111, 165]
-		}, {
-			"name": "lineTo",
-			"args": [89, 165]
-		}, {
-			"name": "lineTo",
-			"args": [82, 144]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["40"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 123.5, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["40", 100, 131.5]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 122]
-		}, {
-			"name": "lineTo",
-			"args": [126, 141]
-		}, {
-			"name": "lineTo",
-			"args": [116, 172]
-		}, {
-			"name": "lineTo",
-			"args": [84, 172]
-		}, {
-			"name": "lineTo",
-			"args": [74, 141]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["60"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 114.25, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["60", 100, 122.25]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 113]
-		}, {
-			"name": "lineTo",
-			"args": [135, 139]
-		}, {
-			"name": "lineTo",
-			"args": [122, 180]
-		}, {
-			"name": "lineTo",
-			"args": [78, 180]
-		}, {
-			"name": "lineTo",
-			"args": [65, 139]
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "measureText",
-			"args": ["80"]
-		}, {
-			"name": "setFillStyle",
-			"args": ["rgba(255,255,255,0.75)"]
-		}, {
-			"name": "fillRect",
-			"args": [88, 105, 24, 16]
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["80", 100, 113]
-		}, {
-			"name": "setLineWidth",
-			"args": [1]
-		}, {
-			"name": "setStrokeStyle",
-			"args": ["rgba(0, 0, 0, 0.1)"]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 150]
-		}, {
-			"name": "lineTo",
-			"args": [65, 139]
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["point5", 60, 137]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 150]
-		}, {
-			"name": "lineTo",
-			"args": [78, 180]
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["point4", 75, 184]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 150]
-		}, {
-			"name": "lineTo",
-			"args": [122, 180]
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["point3", 125, 184]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 150]
-		}, {
-			"name": "lineTo",
-			"args": [135, 139]
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["point2", 140, 137]
-		}, {
-			"name": "beginPath",
-			"args": []
-		}, {
-			"name": "moveTo",
-			"args": [100, 150]
-		}, {
-			"name": "lineTo",
-			"args": [100, 113]
-		}, {
-			"name": "stroke",
-			"args": []
-		}, {
-			"name": "closePath",
-			"args": []
-		}, {
-			"name": "setFillStyle",
-			"args": ["#666"]
-		}, {
-			"name": "fillText",
-			"args": ["point1", 100, 108]
-		}]);
+		for (var x = 0; x < 5; x++) {
+			expect(radToNearestDegree(chart.scale.getIndexAngle(x))).toBe((slice * x) - 90);
+		}
 	});
 });

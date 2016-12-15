@@ -1,5 +1,4 @@
 // Test the rectangle element
-
 describe('Legend block tests', function() {
 	it('Should be constructed', function() {
 		var legend = new Chart.Legend({});
@@ -15,6 +14,7 @@ describe('Legend block tests', function() {
 
 			// a callback that will handle
 			onClick: jasmine.any(Function),
+			onHover: null,
 
 			labels: {
 				boxWidth: 40,
@@ -25,48 +25,43 @@ describe('Legend block tests', function() {
 	});
 
 	it('should update correctly', function() {
-		var chart = {
+		var chart = window.acquireChart({
+			type: 'bar',
 			data: {
 				datasets: [{
 					label: 'dataset1',
 					backgroundColor: '#f31',
 					borderCapStyle: 'butt',
 					borderDash: [2, 2],
-					borderDashOffset: 5.5
+					borderDashOffset: 5.5,
+					data: []
 				}, {
 					label: 'dataset2',
 					hidden: true,
 					borderJoinStyle: 'miter',
+					data: []
 				}, {
 					label: 'dataset3',
 					borderWidth: 10,
-					borderColor: 'green'
-				}]
+					borderColor: 'green',
+					pointStyle: 'crossRot',
+					data: []
+				}],
+				labels: []
 			}
-		};
-		var context = window.createMockContext();
-		var options = Chart.helpers.clone(Chart.defaults.global.legend);
-		var legend = new Chart.Legend({
-			chart: chart,
-			ctx: context,
-			options: options
 		});
 
-		var minSize = legend.update(400, 200);
-		expect(minSize).toEqual({
-			width: 400,
-			height: 54
-		});
-		expect(legend.legendItems).toEqual([{
+		expect(chart.legend.legendItems).toEqual([{
 			text: 'dataset1',
 			fillStyle: '#f31',
-			hidden: undefined,
+			hidden: false,
 			lineCap: 'butt',
 			lineDash: [2, 2],
 			lineDashOffset: 5.5,
 			lineJoin: undefined,
 			lineWidth: undefined,
 			strokeStyle: undefined,
+			pointStyle: undefined,
 			datasetIndex: 0
 		}, {
 			text: 'dataset2',
@@ -78,73 +73,78 @@ describe('Legend block tests', function() {
 			lineJoin: 'miter',
 			lineWidth: undefined,
 			strokeStyle: undefined,
+			pointStyle: undefined,
 			datasetIndex: 1
 		}, {
 			text: 'dataset3',
 			fillStyle: undefined,
-			hidden: undefined,
+			hidden: false,
 			lineCap: undefined,
 			lineDash: undefined,
 			lineDashOffset: undefined,
 			lineJoin: undefined,
 			lineWidth: 10,
 			strokeStyle: 'green',
+			pointStyle: 'crossRot',
 			datasetIndex: 2
 		}]);
 	});
 
 	it('should draw correctly', function() {
-		var chart = {
+		var chart = window.acquireChart({
+			type: 'bar',
 			data: {
 				datasets: [{
 					label: 'dataset1',
 					backgroundColor: '#f31',
 					borderCapStyle: 'butt',
 					borderDash: [2, 2],
-					borderDashOffset: 5.5
+					borderDashOffset: 5.5,
+					data: []
 				}, {
 					label: 'dataset2',
 					hidden: true,
 					borderJoinStyle: 'miter',
+					data: []
 				}, {
 					label: 'dataset3',
 					borderWidth: 10,
-					borderColor: 'green'
-				}]
+					borderColor: 'green',
+					data: []
+				}],
+				labels: []
 			}
-		};
-		var context = window.createMockContext();
-		var options = Chart.helpers.clone(Chart.defaults.global.legend);
-		var legend = new Chart.Legend({
-			chart: chart,
-			ctx: context,
-			options: options
 		});
 
-		var minSize = legend.update(400, 200);
-		legend.left = 50;
-		legend.top = 100;
-		legend.right = legend.left + minSize.width;
-		legend.bottom = legend.top + minSize.height;
+		expect(chart.legend.legendHitBoxes.length).toBe(3);
 
-		legend.draw();
-		expect(legend.legendHitBoxes).toEqual([{
-			left: 114,
-			top: 110,
-			width: 126,
-			height: 12
+		[
+			{h: 12, l: 101, t: 10, w: 93},
+			{h: 12, l: 205, t: 10, w: 93},
+			{h: 12, l: 308, t: 10, w: 93}
+		].forEach(function(expected, i) {
+			expect(chart.legend.legendHitBoxes[i].height).toBeCloseToPixel(expected.h);
+			expect(chart.legend.legendHitBoxes[i].left).toBeCloseToPixel(expected.l);
+			expect(chart.legend.legendHitBoxes[i].top).toBeCloseToPixel(expected.t);
+			expect(chart.legend.legendHitBoxes[i].width).toBeCloseToPixel(expected.w);
+		});
+
+		// NOTE(SB) We should get ride of the following tests and use image diff instead.
+		// For now, as discussed with Evert Timberg, simply comment out.
+		// See http://humblesoftware.github.io/js-imagediff/test.html
+		/* chart.legend.ctx = window.createMockContext();
+		chart.update();
+
+		expect(chart.legend.ctx .getCalls()).toEqual([{
+			"name": "measureText",
+			"args": ["dataset1"]
 		}, {
-			left: 250,
-			top: 110,
-			width: 126,
-			height: 12
+			"name": "measureText",
+			"args": ["dataset2"]
 		}, {
-			left: 182,
-			top: 132,
-			width: 126,
-			height: 12
-		}]);
-		expect(context.getCalls()).toEqual([{
+			"name": "measureText",
+			"args": ["dataset3"]
+		}, {
 			"name": "measureText",
 			"args": ["dataset1"]
 		}, {
@@ -300,6 +300,6 @@ describe('Legend block tests', function() {
 		}, {
 			"name": "fillText",
 			"args": ["dataset3", 228, 132]
-		}]);
+		}]);*/
 	});
 });
